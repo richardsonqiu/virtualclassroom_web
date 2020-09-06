@@ -29,7 +29,7 @@ def register():
         if not username:
             return render_template("error.html", message="please provide username")
 
-        username_check = cursor.execute("SELECT * FROM user WHERE username=:username", {"username": username}).fetchone()
+        username_check = cursor.execute("SELECT * FROM Players WHERE username=:username", {"username": username}).fetchone()
         if username_check:
             return render_template("error.html", message="username already exists")
 
@@ -47,7 +47,7 @@ def register():
         # Hash password to store in DB , method='pbkdf2:sha256', salt_length=8
         hashed_password = generate_password_hash(password)
 
-        cursor.execute("INSERT INTO user (username, password) VALUES (?, ?)",
+        cursor.execute("INSERT INTO Players (username, password) VALUES (?, ?)",
                        (username, hashed_password))
 
         conn.commit()
@@ -69,7 +69,7 @@ def login():
         if not password:
             return render_template("error.html", message="please provide password")
 
-        rows = cursor.execute("SELECT * FROM user WHERE username= ?", [username])
+        rows = cursor.execute("SELECT * FROM Players WHERE username= ?", [username])
 
         result = rows.fetchone()
 
@@ -77,8 +77,8 @@ def login():
             return render_template("error.html", message="invalid username and/or password")
 
         # remember which user has logged in
-        session["user_id"] = result[0]
-        session["user_username"] = result[1]
+        session["player_id"] = result[0]
+        session["player_username"] = result[1]
         print(result[0])
         print(result[1])
 
@@ -90,6 +90,13 @@ def login():
 def logout():
     session.clear()
     return redirect("/")
+
+@app.route("/shop")
+def shop():
+    shopItems = cursor.execute("SELECT * FROM ShopItem").fetchall()
+    if shopItems:
+        print(shopItems)
+    return render_template("shop.html", shopItems=shopItems)
 
 if __name__ == '__main__':
     app.run()
