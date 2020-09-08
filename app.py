@@ -49,9 +49,7 @@ def register():
 
         cursor.execute("INSERT INTO Players (username, password) VALUES (?, ?)",
                        (username, hashed_password))
-
         conn.commit()
-
         flash("Account created", 'info')
 
         return redirect("/login")
@@ -72,7 +70,6 @@ def login():
         rows = cursor.execute("SELECT * FROM Players WHERE username= ?", [username])
 
         result = rows.fetchone()
-
         if result == None or not check_password_hash(result[2], password):
             return render_template("error.html", message="invalid username and/or password")
 
@@ -91,12 +88,28 @@ def logout():
     session.clear()
     return redirect("/")
 
-@app.route("/shop")
+@app.route("/shop", methods=["GET", "POST"])
 def shop():
-    shopItems = cursor.execute("SELECT * FROM ShopItem").fetchall()
-    if shopItems:
-        print(shopItems)
-    return render_template("shop.html", shopItems=shopItems)
+    currentPlayer = session["player_id"]
+    if request.method == "GET":
+        shopItems = cursor.execute("SELECT * FROM ShopItem").fetchall()
+        if shopItems:
+            print(shopItems)
+
+        currency = cursor.execute("SELECT * FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
+        return render_template("shop.html", shopItems=shopItems, currency=currency)
+    else:
+        buy = int(request.form.get("buy"))
+        currentMoney = cursor.execute("SELECT currency FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
+        currentMoney = currentMoney[0]
+        if currentMoney < buy:
+            return render_template("error.html", message="Not enough money")
+
+        currency = cursor.execute("UPDATE Players SET currency = currency - ? WHERE playerId=?", [buy, currentPlayer]).fetchone()
+        conn.commit()
+        return redirect("/shop")
+
+
 
 if __name__ == '__main__':
     app.run()
