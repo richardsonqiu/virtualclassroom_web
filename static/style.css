@@ -1,14 +1,14 @@
-html
-{
-    height: 100%;
-}
+/*html*/
+/*{*/
+/*    height: 100%;*/
+/*}*/
 
-body
-{
-    min-height: 100%;
-    display: grid;
-    grid-template-rows: 1fr auto;
-}
+/*body*/
+/*{*/
+/*    min-height: 100%;*/
+/*    display: grid;*/
+/*    grid-template-rows: 1fr auto;*/
+/*}*/
 
 main .form-control
 {
@@ -40,13 +40,42 @@ main
     text-align: center;
 }
 
-.footer
-{
-  grid-row-start: 2;
-  grid-row-end: 3;
+/*.footer*/
+/*{*/
+/*  grid-row-start: 2;*/
+/*  grid-row-end: 3;*/
+/*}*/
+
+/***/
+/*{*/
+/*    box-sizing: border-box;*/
+/*}*/
+
+.box2 {
+  width: 250px;
+  margin: 20px auto;
+  border: 2px solid #8B0000;
+  padding: 20px;
+  text-align: center;
+  font-weight: 700;
+  color: #FFFAF0;
+  background:#8B0000;
+  font-family: arial;
+  position: relative;
 }
 
-*
-{
-    box-sizing: border-box;
+
+/* speech bubble 9 */
+
+.sb9:before {
+  content: "";
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #8B0000;
+  border-bottom: 10px solid transparent;
+  right: 50%;
+  bottom: -23px;
 }

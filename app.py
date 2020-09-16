@@ -91,13 +91,41 @@ def logout():
 @app.route("/shop", methods=["GET", "POST"])
 def shop():
     currentPlayer = session["player_id"]
+    currentMoney = cursor.execute("SELECT currency FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
+    currentMoney = currentMoney[0]
+
     if request.method == "GET":
         shopItems = cursor.execute("SELECT * FROM ShopItem").fetchall()
         if shopItems:
             print(shopItems)
 
         currency = cursor.execute("SELECT * FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
-        return render_template("shop.html", shopItems=shopItems, currency=currency)
+        return render_template("shop.html", shopItems=shopItems, currency=currency, currentMoney=currentMoney)
+    else:
+        itemId = request.form.get("itemId")
+        itemPrice = cursor.execute("SELECT itemPrice FROM ShopItem WHERE shopItemId=?", [itemId]).fetchone()
+        itemPrice = itemPrice[0]
+        print(request.form.get("itemId"))
+        print(itemPrice)
+
+        if currentMoney < itemPrice:
+            return render_template("error.html", message="not enough money")
+
+        currency = cursor.execute("UPDATE Players SET currency=currency-? WHERE playerId=?", [itemPrice, currentPlayer])
+        conn.commit()
+
+        return redirect("/shop")
+
+@app.route("/avatarshop")
+def avatarshop():
+    currentPlayer = session["player_id"]
+    if request.method == "GET":
+        shopItems = cursor.execute("SELECT * FROM ShopItem").fetchall()
+        if shopItems:
+            print(shopItems)
+
+        currency = cursor.execute("SELECT * FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
+        return render_template("avatarshop.html", shopItems=shopItems, currency=currency)
     else:
         buy = int(request.form.get("buy"))
         currentMoney = cursor.execute("SELECT currency FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
@@ -107,9 +135,7 @@ def shop():
 
         currency = cursor.execute("UPDATE Players SET currency = currency - ? WHERE playerId=?", [buy, currentPlayer]).fetchone()
         conn.commit()
-        return redirect("/shop")
-
-
+        return redirect("/avatarshop")
 
 if __name__ == '__main__':
     app.run()

@@ -5,14 +5,19 @@
 {% endblock %}
 
 {% block body %}
-    <h2>Log in or <a href="/register">Create an Account</a></h2>
-    <form action="/login" method="post">
-        <div class="form-group">
-            <input class="form-control" name="username" placeholder="Username">
-        </div>
-        <div class="form-group">
-            <input class="form-control" name="password" placeholder="Password" type="password"/>
-        </div>
-        <button class="btn btn-primary" type="submit">Log In</button>
-    </form>
+    <div class="container pg-5">
+        <br>
+        <h2>Log in or <a href="/register">Create an Account</a></h2>
+        <form action="/login" method="post">
+            <div class="form-group">
+                <input class="form-control" name="username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input class="form-control" name="password" placeholder="Password" type="password"/>
+            </div>
+            <button class="btn btn-primary" type="submit">Log In</button>
+        </form>
+        <br>
+    </div>
 {% endblock %}
+

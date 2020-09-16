@@ -5,19 +5,23 @@
 {% endblock %}
 
 {% block body %}
-    <h2>Register or <a href="/login">Log In</a></h2>
-    <form action="/register" method="post">
-        <div class="form-group">
-            <input type="text" class="form-control" name="username" placeholder="Username">
-        </div>
-        <div class="form-group">
-            <input type="password" class="form-control" name="password" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <input type="password" class="form-control" name="confirm_password" placeholder="Confirmation Password">
-        </div>
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Register</button>
-        </div>
-    </form>
+    <div class="container pg-5">
+        <br>
+        <h2>Register or <a href="/login">Log In</a></h2>
+        <form action="/register" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" name="username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="password" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="confirm_password" placeholder="Confirmation Password">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Register</button>
+            </div>
+        </form>
+        <br>
+    </div>
 {% endblock %}
