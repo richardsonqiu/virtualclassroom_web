@@ -1,0 +1,228 @@
+{% extends "layout.html" %} {% block title %} ProfilePage {% endblock %} {%
+block body %}
+
+<style>
+  .moneycontainer {
+    position: relative;
+    text-align: center;
+    color: white;
+  }
+
+  .textcentered {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    border-radius: 5px;
+    /* 5px rounded corners */
+  }
+
+  /* On mouse-over, add a deeper shadow */
+  .card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .button:hover {
+    opacity: 0.5;
+  }
+
+  .item {
+    background-color: #533918;
+    opacity: 0.8;
+    color: white;
+    border-radius: 5px;
+  }
+
+  .item:hover {
+    opacity: 1;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .itemimg {
+    height: 100px;
+    width: auto;
+    flex: 2;
+  }
+
+  .itemnameprice {
+    align-self: center;
+    margin-left: 20px;
+    flex: 1;
+  }
+
+  .itemowned {
+    align-self: center;
+    margin-left: 20px;
+    flex: 2;
+  }
+
+  .tab {
+    background-image: url('./static/img/blankwoodtemplate.png');
+    padding: 30px;
+  }
+
+  .avatar {
+    background-color: #533918;
+    opacity: 0.4;
+    color: white;
+    border-radius: 5px;
+    width: 200px;
+    height: auto;
+    margin: 20px;
+  }
+
+  .avatar:hover {
+    opacity: 1;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+</style>
+
+<!-- Page Content -->
+<div style="background-color: #f2f2f2">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-5">
+        <div class="card" style="margin-top: 100px; margin-bottom: 100px">
+          <img src="./static/img/tomnook.png" alt="Avatar" style="width: 100%" />
+          <div class="container">
+            <h4><b>{{ session.player_username }}name</b></h4>
+            <p>Student</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="moneycontainer">
+          <img src=" ./static/img/blankwood.png" alt="" style="height: auto; width: 50%" />
+          <div class="textcentered row" style="font-size: 150%">
+            <h5 class="pt-3" style="color: gold">money</h5>
+            <img src="./static/img/coins.png" class="float-left" />
+          </div>
+        </div>
+
+        <div class="row ml-2">
+          <button class="btn btn-light; border border-white; ml-1; button;" style="background: #533918; color: #ffffff"
+            onclick="opentab('inventory')">Inventory</button>
+          <button class="btn btn-light; border border-white; ml-1; button" style="background: #533918; color: #ffffff"
+            onclick="opentab('avatar')">Avatar</button>
+        </div>
+        <div style="padding: 5px; border-radius: 5px;background: #533918; margin-bottom: 100px;">
+          <div id="inventory" class="tab">
+            <div class="item row">
+              <img src="./static/img/computer.png" alt="computer" class="itemimg" />
+              <h4 class="itemnameprice">Computer</h4>
+              <p class="itemnameprice">Price: </p>
+              <h4 class="itemowned">Owned:</h4>
+            </div>
+
+            <div class="item row" style="margin-top: 10px;">
+              <img src="./static/img/calculator.png" alt="calculator" class="itemimg" />
+              <h4 class="itemnameprice">Calculator</h4>
+              <p class="itemnameprice">Price: </p>
+              <h4 class="itemowned">Owned:</h4>
+            </div>
+
+            <div class="item row" style="margin-top: 10px;">
+              <img src="./static/img/highlighter.png" alt="highlighter" class="itemimg" />
+              <h4 class="itemnameprice">Highlighter</h4>
+              <p class="itemnameprice">Price: </p>
+              <h4 class="itemowned">Owned:</h4>
+            </div>
+
+            <div class="item row" style="margin-top: 10px;">
+              <img src="./static/img/thumbdrive.png" alt="thumbdrive" class="itemimg" />
+              <h4 class="itemnameprice">ThumbDrive</h4>
+              <p class="itemnameprice">Price: </p>
+              <h4 class="itemowned">Owned:</h4>
+            </div>
+
+            <div class="item row" style="margin-top: 10px;">
+              <img src="./static/img/diary.png" alt="diary" class="itemimg" />
+              <h4 class="itemnameprice">diary</h4>
+              <p class="itemnameprice">Price: </p>
+              <h4 class="itemowned">Owned:</h4>
+            </div>
+
+            <div class="item row" style="margin-top: 10px;">
+              <img src="./static/img/lectureNote.png" alt="lecturenote" class="itemimg" />
+              <h4 class="itemnameprice">Lecture Note</h4>
+              <p class="itemnameprice">Price: </p>
+              <h4 class="itemowned">Owned:</h4>
+            </div>
+
+          </div>
+          <div id="avatar" class="tab">
+            <div class="row">
+              <div class="card avatar" style="opacity: 1;">
+                <img src="./static/img/avatar1profile.png" alt="Avatar" style="width: 100%" />
+                <div class="container">
+                  <h4><b>Avatar1</b></h4>
+                  <p>Owned</p>
+                </div>
+              </div>
+
+              <div class="card avatar"><a href="/avatarshop" style="color: white;">
+                  <img src="./static/img/avatar2profile.png" alt="Avatar" style="width: 100%" />
+                  <div class="container">
+                    <h4><b>Avatar2</b></h4>
+                    <p>Buy</p>
+                  </div>
+                </a>
+              </div>
+
+              <div class="card avatar"><a href="/avatarshop" style="color: white;">
+                  <img src="./static/img/avatar3profile.png" alt="Avatar" style="width: 100%" />
+                  <div class="container">
+                    <h4><b>Avatar3</b></h4>
+                    <p>Buy</p>
+                  </div>
+                </a>
+              </div>
+
+              <div class="card avatar"><a href="/avatarshop" style="color: white;">
+                  <img src="./static/img/avatar4profile.png" alt="Avatar" style="width: 100%" />
+                  <div class="container">
+                    <h4><b>Avatar4</b></h4>
+                    <p>Buy</p>
+                  </div>
+                </a>
+              </div>
+
+              <div class="card avatar"><a href="/avatarshop" style="color: white;">
+                  <img src="./static/img/avatar5profile.png" alt="Avatar" style="width: 100%" />
+                  <div class="container">
+                    <h4><b>Avatar5</b></h4>
+                    <p>Buy</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- /.row -->
+        <!-- Row 1.3 -->
+      </div>
+    </div>
+  </div>
+  <!-- /.container -->
+</div>
+
+<script>
+  function opentab(tab) {
+    var i;
+    var x = document.getElementsByClassName("tab");
+    for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none";
+    }
+    document.getElementById(tab).style.display = "block";
+  }
+</script>
+
+{% endblock %}
