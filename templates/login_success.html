@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login Successful
+{% endblock %}
+
+{% block body %}
+    <h2>Login Successful!</h2>
+    <script>
+        if (window.vuplex) {
+            const data = JSON.parse('{{ login_data | safe }}');
+            window.vuplex.postMessage({type: 'LOGIN_DATA', data: data});
+        }
+    </script>
+{% endblock %}

@@ -1,29 +1,34 @@
 from flask import Flask, request, session, redirect, render_template, jsonify, flash
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
-from models import Player
+from dotenv import load_dotenv
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import sqlite3
+import os, sqlite3
 
-conn = sqlite3.connect('classroom.db', check_same_thread=False)
-cursor = conn.cursor()
+
+# Set up db
+from models import Player, ShopItem, PlayerItem, Item, db
+
+# Load env variables
+load_dotenv()
 
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-app.secret_key = 'dev'
+app.secret_key = os.getenv('SECRET_KEY')
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Set up db
-db = SQLAlchemy(app)
-import models
-db.create_all()
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
+
 
 @app.route("/")
 def index():
@@ -53,9 +58,6 @@ def register():
         if not password == confirm_password:
             return render_template("error.html", message="passwords did not match")
 
-        # Hash password to store in DB , method='pbkdf2:sha256', salt_length=8
-        hashed_password = generate_password_hash(password)
-
         player = Player(username=username, password=password)
         db.session.add(player)
         db.session.commit()
@@ -72,21 +74,19 @@ def login():
         username = request.form.get("username")
         if not username:
             return render_template("error.html", message="please provide username")
+        
         password = request.form.get("password")
         if not password:
             return render_template("error.html", message="please provide password")
 
-        rows = cursor.execute("SELECT * FROM Players WHERE username= ?", [username])
+        player = Player.query.filter_by(username=username).first()
 
-        result = rows.fetchone()
-        if result == None or not check_password_hash(result[2], password):
-            return render_template("error.html", message="invalid username and/or password")
+        if player is None:
+            return render_template("error.html", message="boop")
 
         # remember which user has logged in
-        session["player_id"] = result[0]
-        session["player_username"] = result[1]
-        print(result[0])
-        print(result[1])
+        session["player_id"] = player.id
+        session["username"] = player.username
 
         return redirect("/")
     else:
@@ -99,29 +99,21 @@ def logout():
 
 @app.route("/shop", methods=["GET", "POST"])
 def shop():
-    currentPlayer = session["player_id"]
-    currentMoney = cursor.execute("SELECT currency FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
-    currentMoney = currentMoney[0]
+    player_id = session["player_id"]
+    player = Player.query.filter_by(id=player_id).first()
 
     if request.method == "GET":
-        shopItems = cursor.execute("SELECT * FROM ShopItem").fetchall()
-        if shopItems:
-            print(shopItems)
-
-        currency = cursor.execute("SELECT * FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
-        return render_template("shop.html", shopItems=shopItems, currency=currency, currentMoney=currentMoney)
+        shopItems = ShopItem.query.all()
+        return render_template("shop.html", shopItems=shopItems, balance=player.balance)
     else:
-        itemId = request.form.get("itemId")
-        itemPrice = cursor.execute("SELECT itemPrice FROM ShopItem WHERE shopItemId=?", [itemId]).fetchone()
-        itemPrice = itemPrice[0]
-        print(request.form.get("itemId"))
-        print(itemPrice)
+        item_id = request.form.get("itemId")
+        item = Item.query.filter_by(id=item_id).first()
 
-        if currentMoney < itemPrice:
+        if player.balance < item.price:
             return render_template("error.html", message="not enough money")
 
-        currency = cursor.execute("UPDATE Players SET currency=currency-? WHERE playerId=?", [itemPrice, currentPlayer])
-        conn.commit()
+        player.balance -= item.price
+        db.session.commit()
 
         return redirect("/shop")
 
@@ -147,4 +139,4 @@ def avatarshop():
         return redirect("/avatarshop")
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

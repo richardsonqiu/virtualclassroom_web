@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Test
+{% endblock %}
+
+{% block body %}
+    <h2> Heh </h2>
+    <script>
+        // Set up message sender
+        if (window.vuplex) {
+            sendMessageToCSharp();
+        }
+        
+        function sendMessageToCSharp() {
+            // This object passed to postMessage() automatically gets serialized as JSON
+            // and is emitted via the C# MessageEmitted event.
+            window.vuplex.postMessage({ type: 'greeting', message: 'Hello from JavaScript!' });
+            // alert("Message sent to C#.");
+        }
+        
+        // alert("draw //");
+
+        // Set up message listener
+        // window.addEventListener('vuplexready', addMessageListener);
+
+        // function addMessageListener() {
+        //     window.vuplex.addEventListener('message', function(event) {
+        //     let json = event.data;
+        //     // > JSON received: { "type": "greeting", "message": "Hello from C#!" }
+        //     console.log('JSON received: ' + json);
+        //     });
+        // }
+    </script>
+    <!-- <h2>Log in or <a href="/register">Create an Account</a></h2>
+    <form action="/login" method="post">
+        
+        <div class="form-group">
+            <input class="form-control" name="username" placeholder="Username">
+        </div>{}
+        <div class="form-group">
+            <input class="form-control" name="password" placeholder="Password" type="password"/>
+        </div>
+        <button class="btn btn-primary" type="submit">Log In</button>
+       
+    </form> -->
+{% endblock %}

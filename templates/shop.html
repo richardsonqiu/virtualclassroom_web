@@ -65,17 +65,17 @@
                             {% for shopItem in shopItems %}
                                 <div class="col-lg-3 m-2 p-1 text-white" style="background: #533918">
                                     <div class="card h-100">
-                                        <a href="#"><img class="card-img-top" src="./static/img/{{ shopItem[1] }}.png"
+                                        <a href="#"><img class="card-img-top" src="./static/img/{{ shopItem.item.name }}.png"
                                                          alt=""></a>
                                         <div class="card-body">
                                             <h4 class="card-title">
-                                                <a href="#">{{ shopItem[1] }}</a>
+                                                <a href="#">{{ shopItem.item.name }}</a>
                                             </h4>
 
                                             <button name="buy" style="background: #d9b980; color: #ffffff"
                                                     class="btn btn-lg active" type="submit"
-                                                    onclick="buyItem({{ shopItem[0] }}, {{ shopItem[2] }});">
-                                                Buy $ {{ shopItem[2] }}
+                                                    onclick="buyItem({{ shopItem.item.id }}, {{ shopItem.price }});">
+                                                Buy $ {{ shopItem.price }}
                                             </button>
 
                                         </div>
@@ -95,7 +95,7 @@
                         <div class="container-fluid p-2 my-2 bg-secondary text-white border border-white rounded">
                             <img src="./static/img/coins.png" class="float-left">
                             <div class="pt-3">
-                                <h5> {{ currency[3] }} </h5>
+                                <h5> {{ balance }} </h5>
                             </div>
                         </div>
                     </div>
@@ -172,7 +172,7 @@
             form.submit();
         }
 
-        const currentMoney = {{ currentMoney }};
+        const currentMoney = {{ balance }};
 
         function buyItem(itemId, itemPrice) {
             if (currentMoney < itemPrice) {
