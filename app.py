@@ -1,5 +1,7 @@
 from flask import Flask, request, session, redirect, render_template, jsonify, flash
 from flask_session import Session
+from flask_sqlalchemy import SQLAlchemy
+from models import Player
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -9,12 +11,19 @@ conn = sqlite3.connect('classroom.db', check_same_thread=False)
 cursor = conn.cursor()
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.secret_key = 'dev'
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+# Set up db
+db = SQLAlchemy(app)
+import models
+db.create_all()
 
 @app.route("/")
 def index():
@@ -29,7 +38,7 @@ def register():
         if not username:
             return render_template("error.html", message="please provide username")
 
-        username_check = cursor.execute("SELECT * FROM Players WHERE username=:username", {"username": username}).fetchone()
+        username_check = Player.query.filter_by(username=username).first()
         if username_check:
             return render_template("error.html", message="username already exists")
 
@@ -47,9 +56,9 @@ def register():
         # Hash password to store in DB , method='pbkdf2:sha256', salt_length=8
         hashed_password = generate_password_hash(password)
 
-        cursor.execute("INSERT INTO Players (username, password) VALUES (?, ?)",
-                       (username, hashed_password))
-        conn.commit()
+        player = Player(username=username, password=password)
+        db.session.add(player)
+        db.session.commit()
         flash("Account created", 'info')
 
         return redirect("/login")

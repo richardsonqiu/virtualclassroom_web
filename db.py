@@ -61,7 +61,6 @@ cursor = conn.cursor()
 #     """
 # )
 
-
 conn.commit()
 
 conn.close()
