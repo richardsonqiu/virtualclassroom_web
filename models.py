@@ -31,6 +31,7 @@ class Item(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    category = db.Column(db.String, nullable=False)
 
 
 class PlayerItem(db.Model):
@@ -47,5 +48,5 @@ class ShopItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey(Item.id), nullable=False)
-    item = db.relationship(Item, uselist=False)
+    item = db.relationship(Item, lazy="joined", innerjoin=True, uselist=False)
     price = db.Column(db.Integer, nullable=False)

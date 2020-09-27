@@ -2,10 +2,11 @@ from flask import Flask, request, session, redirect, render_template, jsonify, f
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from sqlalchemy.orm import joinedload
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import os, sqlite3
+import os
 
 
 # Set up db
@@ -61,6 +62,7 @@ def register():
         player = Player(username=username, password=password)
         db.session.add(player)
         db.session.commit()
+        print(db.session)
         flash("Account created", 'info')
 
         return redirect("/login")
@@ -82,7 +84,7 @@ def login():
         player = Player.query.filter_by(username=username).first()
 
         if player is None:
-            return render_template("error.html", message="boop")
+            return render_template("error.html", message="sorry you don't exist bro")
 
         # remember which user has logged in
         session["player_id"] = player.id
@@ -103,7 +105,7 @@ def shop():
     player = Player.query.filter_by(id=player_id).first()
 
     if request.method == "GET":
-        shopItems = ShopItem.query.all()
+        shopItems = ShopItem.query.join(ShopItem.item).filter(Item.category == 'general').all()
         return render_template("shop.html", shopItems=shopItems, balance=player.balance)
     else:
         item_id = request.form.get("itemId")
@@ -119,23 +121,22 @@ def shop():
 
 @app.route("/avatarshop")
 def avatarshop():
-    currentPlayer = session["player_id"]
+    player_id = session["player_id"]
+    player = Player.query.filter_by(id=player_id).first()
+
     if request.method == "GET":
-        shopItems = cursor.execute("SELECT * FROM ShopItem").fetchall()
-        if shopItems:
-            print(shopItems)
-
-        currency = cursor.execute("SELECT * FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
-        return render_template("avatarshop.html", shopItems=shopItems, currency=currency)
+        shopItems = ShopItem.query.join(ShopItem.item).filter(Item.category == 'avatar').all()
+        return render_template("avatarshop.html", shopItems=shopItems, balance=player.balance)
     else:
-        buy = int(request.form.get("buy"))
-        currentMoney = cursor.execute("SELECT currency FROM Players WHERE playerId=?", [currentPlayer]).fetchone()
-        currentMoney = currentMoney[0]
-        if currentMoney < buy:
-            return render_template("error.html", message="Not enough money")
+        item_id = request.form.get("itemId")
+        item = Item.query.filter_by(id=item_id).first()
 
-        currency = cursor.execute("UPDATE Players SET currency = currency - ? WHERE playerId=?", [buy, currentPlayer]).fetchone()
-        conn.commit()
+        if player.balance < item.price:
+            return render_template("error.html", message="not enough money")
+
+        player.balance -= item.price
+        db.session.commit()
+
         return redirect("/avatarshop")
 
 if __name__ == '__main__':

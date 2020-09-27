@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import os, sqlite3
+import os
 
 
 # Set up db
@@ -25,18 +25,33 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+# # shop_items = {
+#     ('calculator', 10),
+#     ('computer', 1000),
+#     ('diary', 20),
+#     ('highlighter', 50),
+#     ('lectureNote', 30),
+#     ('thumbdrive', 100)
+# }
+#
+
 shop_items = {
-    ('calculator', 10),
-    ('computer', 1000),
-    ('diary', 20),
-    ('highlighter', 50),
-    ('lectureNote', 30),
-    ('thumbdrive', 100)
+    ('av_allen', 'avatar', 500),
+    ('av_allie', 'avatar', 500),
+    ('av_ariel', 'avatar', 500),
+    ('av_emilia', 'avatar', 500),
+    ('av_michelle', 'avatar', 500),
+    ('calculator', 'general', 10),
+    ('computer', 'general', 1000),
+    ('diary', 'general', 20),
+    ('highlighter', 'general', 50),
+    ('lecturenote', 'general', 30),
+    ('thumbdrive', 'general', 100)
 }
 
 for x in shop_items:
-    item = Item(name=x[0])
-    shop_item = ShopItem(item=item, price=x[1])
+    item = Item(name=x[0], category=x[1])
+    shop_item = ShopItem(item=item, price=x[2])
     with app.app_context():
         db.session.add(item)
         db.session.add(shop_item)
