@@ -75,18 +75,26 @@
                                 </ul>
 
                                 <div class="carousel-inner">
-
-                                    {%  for shopItem in shopItems %}
+                                    <div class="carousel-item active">
+                                        <img src="./static/img/TheIEMShop.png" alt="" width="650"
+                                             height="400">
+                                    </div>
+                                    {% for shopItem in shopItems %}
                                         <div class="carousel-item">
-                                            <img src="./static/img/{{ shopItem.item.name }}" alt="" width="650" height="400">
+                                            <img src="./static/img/{{ shopItem.item.name }}.png" alt="" width="650"
+                                                 height="400">
                                             <div class="carousel-caption">
-
-                                                <a href="#" class=" btn btn-danger btn-lg active " role="button">Cancel</a>
-                                                <a href="#" class="ml-5 btn btn-warning btn-lg active" role="button">Buy $ {{ shopItem.price }}</a>
+                                                {#<a href="#" class=" btn btn-danger btn-lg active " role="button">Cancel</a>#}
+{#                                                <a href="#" class="btn btn-warning btn-lg active" role="button">Buy#}
+{#                                                    $ {{ shopItem.price }}</a>#}
+                                                <button name="buy" style="background: #d9b980; color: #ffffff"
+                                                        class="btn btn-lg active" type="submit"
+                                                        onclick="buyItem({{ shopItem.item.id }}, {{ shopItem.price }});">
+                                                    Buy $ {{ shopItem.price }}
+                                                </button>
                                             </div>
                                         </div>
                                     {% endfor %}
-
 
 
                                     <a class="carousel-control-prev" href="#demo" data-slide="prev">
@@ -129,5 +137,55 @@
         </div>
         <!-- /.container -->
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="noticeMessage" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Not enough money
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function redirectPost(url, data) {
+            var form = document.createElement('form');
+            document.body.appendChild(form);
+            form.method = 'post';
+            form.action = url;
+            for (var name in data) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = data[name];
+                form.appendChild(input);
+            }
+            form.submit();
+        }
+
+        const currentMoney = {{ balance }};
+
+        function buyItem(itemId, itemPrice) {
+            if (currentMoney < itemPrice) {
+                $('#noticeMessage').modal('toggle');
+            } else {
+                let data = {itemId};
+
+                redirectPost('/shop', data);
+            }
+        }
+
+    </script>
 
 {% endblock %}
