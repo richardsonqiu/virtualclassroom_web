@@ -109,17 +109,23 @@ def shop():
         return render_template("shop.html", shopItems=shopItems, balance=player.balance)
     else:
         item_id = request.form.get("itemId")
-        item = Item.query.filter_by(id=item_id).first()
+        print("item_id: " + item_id)
+        item = ShopItem.query.filter_by(id=item_id).first()
+        print(item.item.name)
 
         if player.balance < item.price:
             return render_template("error.html", message="not enough money")
 
         player.balance -= item.price
+
+        item_bought = Item(name=item.item.name, category=item.item.category)
+        player_item = PlayerItem(item=item_bought, player_id=player_id)
+        db.session.add(player_item)
         db.session.commit()
 
         return redirect("/shop")
 
-@app.route("/avatarshop")
+@app.route("/avatarshop", methods=["GET", "POST"])
 def avatarshop():
     player_id = session["player_id"]
     player = Player.query.filter_by(id=player_id).first()
@@ -129,15 +135,30 @@ def avatarshop():
         return render_template("avatarshop.html", shopItems=shopItems, balance=player.balance)
     else:
         item_id = request.form.get("itemId")
-        item = Item.query.filter_by(id=item_id).first()
+        item = ShopItem.query.filter_by(id=item_id).first()
 
         if player.balance < item.price:
             return render_template("error.html", message="not enough money")
 
         player.balance -= item.price
+
+        item_bought = Item(name=item.item.name, category=item.item.category)
+        player_item = PlayerItem(item=item_bought, player_id=player_id)
+        db.session.add(player_item)
         db.session.commit()
 
         return redirect("/avatarshop")
+
+@app.route("/profile")
+def profile():
+    player_id = session["player_id"]
+    player = Player.query.filter_by(id=player_id).first()
+    # ShopItem.query.join(ShopItem.item).filter(Item.category == 'general').all()
+    generalItems = PlayerItem.query.join(PlayerItem.item).filter(Item.category == 'general').all()
+    print(generalItems)
+    avatarItems = PlayerItem.query.join(PlayerItem.item).filter(Item.category == 'avatar').all()
+
+    return render_template("profile.html", generalItems=generalItems, avatarItems=avatarItems, balance=player.balance)
 
 if __name__ == '__main__':
     app.run(debug=True)

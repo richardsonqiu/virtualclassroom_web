@@ -40,7 +40,7 @@ class PlayerItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     player_id = db.Column(db.Integer, db.ForeignKey(Player.id), nullable=False)
     item_id = db.Column(db.Integer, db.ForeignKey(Item.id), nullable=False)
-    item = db.relationship(Item, uselist=False)
+    item = db.relationship(Item, lazy="joined", innerjoin=True, uselist=False)
 
 
 class ShopItem(db.Model):
