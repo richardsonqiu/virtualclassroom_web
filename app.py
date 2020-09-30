@@ -132,6 +132,7 @@ def avatarshop():
 
     if request.method == "GET":
         shopItems = ShopItem.query.join(ShopItem.item).filter(Item.category == 'avatar').all()
+        print(shopItems)
         return render_template("avatarshop.html", shopItems=shopItems, balance=player.balance)
     else:
         item_id = request.form.get("itemId")

@@ -48,7 +48,18 @@ with app.app_context():
 #         db.session.add(shop_item)
 #         db.session.commit()
 
+shop_items = {
+    ('av_nathan', 'avatar', 500)
+}
+
 with app.app_context():
+    for x in shop_items:
+        item = Item(name=x[0], category=x[1])
+        shop_item = ShopItem(item=item, price=x[2])
+
     player = Player.query.filter_by(username='rich').first()
     player.balance = 5000
+
+    db.session.add(item)
+    db.session.add(shop_item)
     db.session.commit()

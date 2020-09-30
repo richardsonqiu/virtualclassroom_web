@@ -88,7 +88,7 @@
             <div class="row">
                 <div class="col-lg-5">
                     <div class="card" style="margin-top: 100px; margin-bottom: 100px">
-                        <img src="./static/img/av_allen.png" alt="Avatar" style="width: 100%"/>
+                        <img src="./static/img/owned_av_allen.png" alt="Avatar" style="width: 50%; margin-left: auto; margin-right: auto; display: block;"/>
                         <div class="container">
                             <h4><b>{{ session.username }}</b></h4>
                             <p>Student</p>
@@ -97,9 +97,9 @@
                 </div>
 
                 <div class="col-lg-6">
-                    <div class="moneycontainer">
+                    <div class="moneycontainer" style="margin-top: 20px">
                         <img src=" ./static/img/blankwood.png" alt="" style="height: auto; width: 50%"/>
-                        <div class="textcentered row" style="font-size: 150%">
+                        <div class="textcentered row" style="font-size: 150%; margin-top: 10px">
                             <img src="./static/img/coins.png" class="float-left"/>
                             <h5 class="pt-3" style="color: gold">{{ balance }}</h5>
                         </div>
@@ -132,7 +132,7 @@
                             <div class="row">
                                 {% for avatarItem in avatarItems %}
                                     <div class="card avatar"><a href="/avatarshop" style="color: white;">
-                                        <img src="./static/img/{{ avatarItem.item.name }}.png" alt="" style="width: 100%"/>
+                                        <img src="./static/img/owned_{{ avatarItem.item.name }}.png" alt="" style="width: 100%"/>
                                         <div class="container">
                                             <h4><b>{{ avatarItem.item.name }}</b></h4>
                                             <p>Owned</p>
