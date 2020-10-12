@@ -131,13 +131,14 @@
                         <div id="avatar" class="tab">
                             <div class="row">
                                 {% for avatarItem in avatarItems %}
-                                    <div class="card avatar"><a href="/avatarshop" style="color: white;">
+                                    <div class="card avatar"
+                                        onclick="changeCurrentAvatar('{{ avatarItem.item.name }}')"
+                                        >
                                         <img src="./static/img/owned_{{ avatarItem.item.name }}.png" alt="" style="width: 100%"/>
                                         <div class="container">
                                             <h4><b>{{ avatarItem.item.name }}</b></h4>
                                             <p>Owned</p>
                                         </div>
-                                    </a>
                                     </div>
                                 {% endfor %}
                             </div>
@@ -160,6 +161,24 @@
                 x[i].style.display = "none";
             }
             document.getElementById(tab).style.display = "block";
+        }
+
+        function changeCurrentAvatar(avatarName) {
+            // Update database: current_avatar
+            $.ajax("/avatar", {
+                data: JSON.stringify({ avatarName }),
+                contentType : 'application/json',
+                type : 'POST',
+                success: function(data) {
+                    console.log(`Current avatar is ${data}`)
+                }
+            });
+
+            // Signal Unity to respawn character with new avatar
+            if (window.vuplex) {
+                // const data = JSON.parse('{{ avatarName | safe }}');
+                window.vuplex.postMessage(avatarName);
+            }
         }
     </script>
 

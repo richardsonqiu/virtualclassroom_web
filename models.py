@@ -14,6 +14,7 @@ class Player(db.Model):
     balance = db.Column(db.Integer, default=0, nullable=False)
     room_name = db.Column(db.String(20), default='TEST', nullable=False)
     player_items = db.relationship('PlayerItem')
+    current_avatar = db.Column(db.String, default='vBasicController_allie chibi', nullable=False)
 
     def __init__(self, username, password):
         self.username = username
@@ -39,6 +40,7 @@ class PlayerItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     player_id = db.Column(db.Integer, db.ForeignKey(Player.id), nullable=False)
+    player = db.relationship(Player, uselist=False)
     item_id = db.Column(db.Integer, db.ForeignKey(Item.id), nullable=False)
     item = db.relationship(Item, lazy="joined", innerjoin=True, uselist=False)
 

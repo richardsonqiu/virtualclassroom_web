@@ -25,30 +25,8 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-
-shop_items = {
-    ('av_allen', 'avatar', 500),
-    ('av_allie', 'avatar', 500),
-    ('av_ariel', 'avatar', 500),
-    ('av_emilia', 'avatar', 500),
-    ('av_michelle', 'avatar', 500),
-    ('calculator', 'general', 10),
-    ('computer', 'general', 1000),
-    ('diary', 'general', 20),
-    ('highlighter', 'general', 50),
-    ('lecturenote', 'general', 30),
-    ('thumbdrive', 'general', 100)
-}
-
 with app.app_context():
-    for x in shop_items:
-        item = Item(name=x[0], category=x[1])
-        shop_item = ShopItem(item=item, price=x[2])
-        db.session.add(item)
-        db.session.add(shop_item)
-
-    player = Player('a', 'a')
+    player = Player.query.filter_by(username='a').first()
     player.balance = 5000
-
-    db.session.add(player)
+    player.current_avatar = 'vBasicController_MiniGirl'
     db.session.commit()

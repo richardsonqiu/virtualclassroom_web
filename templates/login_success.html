@@ -8,8 +8,8 @@
     <h2>Login Successful!</h2>
     <script>
         if (window.vuplex) {
-            const data = JSON.parse('{{ login_data | safe }}');
-            window.vuplex.postMessage({type: 'LOGIN_DATA', data: data});
+            const data = JSON.parse('{{ player_info | safe }}');
+            window.vuplex.postMessage({type: 'PLAYER_INFO', data: data});
         }
     </script>
 {% endblock %}
