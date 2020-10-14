@@ -11,10 +11,10 @@ class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    balance = db.Column(db.Integer, default=0, nullable=False)
+    balance = db.Column(db.Integer, default=5000, nullable=False)
     room_name = db.Column(db.String(20), default='TEST', nullable=False)
     player_items = db.relationship('PlayerItem')
-    current_avatar = db.Column(db.String, default='vBasicController_allie chibi', nullable=False)
+    current_avatar = db.Column(db.String, default='av_allie', nullable=False)
 
     def __init__(self, username, password):
         self.username = username

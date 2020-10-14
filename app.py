@@ -23,6 +23,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv('SECRET_KEY')
 
 app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
 db.init_app(app)
@@ -153,9 +154,9 @@ def profile():
     player_id = session['player_id']
     player = Player.query.filter_by(id=player_id).first()
     # ShopItem.query.join(ShopItem.item).filter(Item.category == 'general').all()
-    generalItems = PlayerItem.query.join(PlayerItem.item).filter(Item.category == 'general').all()
+    generalItems = PlayerItem.query.filter_by(player=player).join(PlayerItem.item).filter(Item.category == 'general').all()
     print(generalItems)
-    avatarItems = PlayerItem.query.join(PlayerItem.item).filter(Item.category == 'avatar').all()
+    avatarItems = PlayerItem.query.filter_by(player=player).join(PlayerItem.item).filter(Item.category == 'avatar').all()
 
     return render_template('profile.html', generalItems=generalItems, avatarItems=avatarItems, balance=player.balance)
 
