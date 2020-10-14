@@ -5,19 +5,49 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container pg-5">
-        <br>
-        <h2>Log in or <a href="/register">Create an Account</a></h2>
-        <form action="/login" method="post">
-            <div class="form-group">
-                <input class="form-control" name="username" placeholder="Username">
+
+	<style>
+
+		.btn-btn{
+    		background: #926e4e ;
+    		color: #ffffff;
+
+		}
+
+		.btn-btn:hover{
+    		background:#503823 ;
+		}
+
+	</style>
+
+	<div class="container-fluid" >
+
+    	<div style="height:125vh; background-image:url('./static/img/login.jpg'); background-size: 100% 100%; ">
+            <div class="row" style=" height: 55vh" >
             </div>
-            <div class="form-group">
-                <input class="form-control" name="password" placeholder="Password" type="password"/>
-            </div>
-            <button class="btn btn-primary" type="submit">Log In</button>
-        </form>
-        <br>
+
+			<div class= "row justify-content-center" >
+	        	<div class=" col-md-4 mx-5 align-items-center rounded border border-white" style="background: #f8f3ee; opacity: 0.95; color:#352517 " >
+
+        			<h3 class="py-3 ">Log in or <a href="/register" style=" color:#926e4e">Create an Account</a></h3>
+
+        			<form action="/login" method="post">
+            			<div class="form-group">
+                			<input class="form-control" name="username" placeholder="Username">
+            			</div>
+            			<div class="form-group">
+                			<input class="form-control" name="password" placeholder="Password" type="password"/>
+            			</div>
+            			<div class="form-group">
+            				<button class="btn btn-btn" type="submit">Log In</button>
+            			</div>
+        			</form>
+
+    			</div>
+    		</div>
+    	</div>
+
     </div>
+
 {% endblock %}
 

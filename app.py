@@ -158,7 +158,7 @@ def profile():
     print(generalItems)
     avatarItems = PlayerItem.query.filter_by(player=player).join(PlayerItem.item).filter(Item.category == 'avatar').all()
 
-    return render_template('profile.html', generalItems=generalItems, avatarItems=avatarItems, balance=player.balance)
+    return render_template('profile.html', generalItems=generalItems, avatarItems=avatarItems, player=player)
 
 @app.route('/avatar', methods=['POST'])
 def avatar():
