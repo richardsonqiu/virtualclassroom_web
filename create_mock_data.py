@@ -9,7 +9,7 @@ import os
 
 
 # Set up db
-from models import Player, ShopItem, PlayerItem, Item, db
+from models import Player, ShopItem, PlayerItem, Item, Classroom, PlayerClassroom, db
 
 # Load env variables
 load_dotenv()
@@ -40,12 +40,25 @@ shop_items = {
     ('thumbdrive', 'general', 100)
 }
 
+roomnames = [
+    'ENGLISH',
+    'MATH',
+    'SCIENCE',
+    'ART',
+    'MOTHER TONGUE LANGUAGE',
+    'PHYSICAL EDUCATION :)'
+]
+
 with app.app_context():
     for x in shop_items:
         item = Item(name=x[0], category=x[1])
         shop_item = ShopItem(item=item, price=x[2])
         db.session.add(item)
         db.session.add(shop_item)
+
+    for roomname in roomnames:
+        classroom = Classroom(roomname=roomname)
+        db.session.add(classroom)
 
     player = Player('a', 'a')
     player.balance = 5000

@@ -28,26 +28,136 @@
 
 			<div class= "row justify-content-center" >
 	        	<div class=" col-md-4 mx-5 align-items-center rounded border border-white" style="background: #f8f3ee; opacity: 0.95; color:#352517 " >
+					<div id="login-page">
+						<h3 class="py-3 ">Log in or <a href="/register" style=" color:#926e4e">Create an Account</a></h3>
 
-        			<h3 class="py-3 ">Log in or <a href="/register" style=" color:#926e4e">Create an Account</a></h3>
+						<form id="login-form">
+							<div class="form-group">
+								<input class="form-control" name="username" placeholder="Username">
+							</div>
+							<div class="form-group">
+								<input class="form-control" name="password" placeholder="Password" type="password"/>
+							</div>
+							<p id="login-error-message" class="text-danger">
+								
+                            </p>
+							<div class="form-group">
+								<button class="btn btn-btn" type="submit">Log In</button>
+							</div>
+						</form>
+					</div>
+        			<div id="room-select-page" style="display: none">
+						<h3 class="py-3 ">Select a classroom</h3>
 
-        			<form action="/login" method="post">
-            			<div class="form-group">
-                			<input class="form-control" name="username" placeholder="Username">
-            			</div>
-            			<div class="form-group">
-                			<input class="form-control" name="password" placeholder="Password" type="password"/>
-            			</div>
-            			<div class="form-group">
-            				<button class="btn btn-btn" type="submit">Log In</button>
-            			</div>
-        			</form>
+						<form id="room-select-form">
+							<div class="form-group">
+								<label for="roomname-select">Roomname:</label>
+								<select class="form-control" id="roomname-select">
+								</select>
+							</div>
+							<div class="form-group">
+								<button class="btn btn-btn" type="submit">Enter room</button>
+							</div>
+						</form>
+					</div>
 
+					<div id="joining-room-page" style="display: none">
+						<h3 class="py-3 ">Login Successful!</h3>
+						<h3 class="py-3 ">Joining Room...</h3>
+					</div>
+					
     			</div>
     		</div>
     	</div>
 
-    </div>
+	</div>
+	
+	<script>
+		function getFormData($form){
+			var unindexed_array = $form.serializeArray();
+			var indexed_array = {};
+
+			$.map(unindexed_array, function(n, i){
+				indexed_array[n['name']] = n['value'];
+			});
+
+			return indexed_array;
+		}
+
+		const loginForm = $("#login-form");
+		loginForm.on("submit", () => {
+			// console.log(getFormData(loginForm));
+			$.ajax("/login", {
+                data: JSON.stringify(getFormData(loginForm)),
+                contentType : 'application/json',
+                type : 'POST',
+                success: function(response) {
+                    // console.log(response);
+					const { status, data } = response;
+					if (status == "Ok") {
+						showRoomSelect(data.roomnames);
+					} else {
+                        setLoginErrorMessage(data.message);
+                    }
+                }
+            });
+
+			return false;
+		});
+
+		const roomSelectForm = $("#room-select-form");
+		roomSelectForm.on("submit", () => {
+			// console.log(getFormData(loginForm));
+			$.ajax("/joinroom", {
+                data: JSON.stringify(getFormData(roomSelectForm)),
+                contentType : 'application/json',
+                type : 'POST',
+                success: function(response) {
+                    // console.log(response);
+					const { status, data } = response;
+					if (status == "Ok") {
+						showJoinRoomMessage();
+						if (window.vuplex) {
+            				const data = JSON.parse('{{ player_info | safe }}');
+            				window.vuplex.postMessage({type: 'PLAYER_INFO', data: data});
+        				}	
+					}
+                }
+            });
+
+			return false;
+		});
+
+		function showRoomSelect(roomnames) {
+			// populate dropdown for room selection
+			const select = $("#roomname-select");
+			select.empty();
+			
+			for (const roomname of roomnames) {
+				select.append(
+					$('<option />')
+						.text(roomname)
+						.val(roomname)
+				);
+			}
+
+			// hide login form
+			$("#login-page").hide();
+
+			// show room select form
+			$("#room-select-page").show();
+		}
+
+		function setLoginErrorMessage(message) {
+			$("#login-error-message").text(message)
+		}
+
+		function showJoinRoomMessage() {
+			$("#room-select-page").hide();
+			$("#joining-room-page").show();
+		}
+
+	</script>
 
 {% endblock %}
 

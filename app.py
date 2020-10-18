@@ -4,14 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from sqlalchemy.orm import joinedload
 
-from werkzeug.security import check_password_hash, generate_password_hash
-
 import json
 import os
 
 
 # Set up db
-from models import Player, ShopItem, PlayerItem, Item, db
+from models import Player, ShopItem, PlayerItem, Item, Classroom, PlayerClassroom, db
 
 # Load env variables
 load_dotenv()
@@ -62,8 +60,13 @@ def register():
 
         player = Player(username=username, password=password)
         db.session.add(player)
+
+        classrooms = Classroom.query.all()
+        for classroom in classrooms:
+            player_classroom = PlayerClassroom(classroom=classroom, player=player)
+            db.session.add(player_classroom)
+
         db.session.commit()
-        print(db.session)
         flash('Account created', 'info')
 
         return redirect('/login')
@@ -74,30 +77,45 @@ def login():
     session.clear()
 
     if request.method == 'POST':
-        username = request.form.get('username')
-        if not username:
-            return render_template('error.html', message='please provide username')
-        
-        password = request.form.get('password')
-        if not password:
-            return render_template('error.html', message='please provide password')
+        username = request.json.get('username')
+        password = request.json.get('password')
 
         player = Player.query.filter_by(username=username).first()
-
-        if player is None:
-            return render_template('error.html', message='the user does not exist')
-
+        
         # remember which user has logged in
         session['player_id'] = player.id
         session['username'] = player.username
 
-        return render_template('login_success.html', player_info=json.dumps({
-            'username': player.username,
-            'roomname': player.room_name,
-            'avatar': player.current_avatar,
-        }))
+        if player and player.check_password(password):
+            return jsonify({
+                'status': 'Ok',
+                'data': {
+                    'roomnames': player.get_roomnames()
+                }
+            })
+        else:
+            return jsonify({
+                'status': 'Error',
+                'data': {
+                    'message': 'Invalid username or password.'
+                }
+            })
+
     else:
         return render_template('login.html')
+
+@app.route('/joinroom', methods=['POST'])
+def joinroom():
+    player = Player.query.filter_by(username=session['username']).first()
+    roomname = request.json.get('roomname')
+    return jsonify({
+        'status': 'Ok',
+        'data': {
+            'username': player.username,
+            'roomname': roomname,
+            'avatar': player.current_avatar
+        }
+    })
 
 @app.route('/logout')
 def logout():
