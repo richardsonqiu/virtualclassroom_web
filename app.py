@@ -82,11 +82,11 @@ def login():
 
         player = Player.query.filter_by(username=username).first()
         
-        # remember which user has logged in
-        session['player_id'] = player.id
-        session['username'] = player.username
 
         if player and player.check_password(password):
+            # remember which user has logged in
+            session['player_id'] = player.id
+            session['username'] = player.username
             return jsonify({
                 'status': 'Ok',
                 'data': {
