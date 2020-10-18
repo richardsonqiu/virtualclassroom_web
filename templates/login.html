@@ -118,7 +118,6 @@
 					if (status == "Ok") {
 						showJoinRoomMessage();
 						if (window.vuplex) {
-            				const data = JSON.parse('{{ player_info | safe }}');
             				window.vuplex.postMessage({type: 'PLAYER_INFO', data: data});
         				}	
 					}
